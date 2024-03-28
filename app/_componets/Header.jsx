@@ -50,7 +50,7 @@ export const Header = () => {
 
         <div className="hidden md:flex relative gap-3 items-center border border-orange-950 rounded-full  bg-orange-200 text-orange-900 text-lg">
           <Search className="cursor-text pointer-events-none absolute left-4" />
-          <input className="bg-orange-200 placeholder:text-orange-900 w-full outline-none p-2 px-8 h-full rounded-full pl-12 text-lg" type="text" placeholder="Search" />
+          <input className="bg-stone-200 placeholder:text-orange-900 w-full outline-none p-2 px-8 h-full rounded-full pl-12 text-lg" type="text" placeholder="Search" />
         </div>
       </div>
       <div className="flex items-center gap-6 pr-5 pl-6">
