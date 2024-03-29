@@ -14,3 +14,7 @@ export const getCategoryList = () => axiosClient.get('/categories?populate=*').t
 export const getAllProducts = () => axiosClient.get('/products?populate=*').then(resp => {
   return resp?.data?.data
 })
+
+export const getProductsByCategory = (category) => axiosClient.get(`/products?filters[categories][name][$eq]=${category}&populate=*`).then(resp => {
+  return resp?.data?.data
+})

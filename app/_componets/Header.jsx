@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { getCategory } from "../_utils/GlobalApi"
+import Link from "next/link"
 
 
 export const Header = () => {
@@ -40,10 +41,12 @@ export const Header = () => {
             <DropdownMenuLabel className='text-lg'>Browse Category</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {cateroryList.map(category => (
-              <DropdownMenuItem key={category.id} className='flex gap-4 text-lg pl-5'>
-                <Image src={process.env.NEXT_PUBLIC_BACKEND_BASE_URL+category?.attributes?.icon?.data[0]?.attributes?.url} width={25} height={25} alt="icon"/>
-                {category?.attributes?.name}
+              <Link href={'/products-category/'+category?.attributes?.name} key={category.id} >
+                <DropdownMenuItem key={category.id} className='flex gap-4 text-lg pl-5'>
+                  <Image src={process.env.NEXT_PUBLIC_BACKEND_BASE_URL+category?.attributes?.icon?.data[0]?.attributes?.url} width={25} height={25} alt="icon"/>
+                  {category?.attributes?.name}
                 </DropdownMenuItem>
+              </Link>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
