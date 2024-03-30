@@ -18,3 +18,5 @@ export const getAllProducts = () => axiosClient.get('/products?populate=*').then
 export const getProductsByCategory = (category) => axiosClient.get(`/products?filters[categories][name][$eq]=${category}&populate=*`).then(resp => {
   return resp?.data?.data
 })
+
+export const registerUser = (username, email, password) => axiosClient.post('/auth/local/register', {username, email, password})

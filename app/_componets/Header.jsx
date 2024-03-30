@@ -28,7 +28,9 @@ export const Header = () => {
   return (
     <header className="flex justify-between p-5 shadow-md">
       <div className="flex gap-6 items-center">
-        <Image width={150} height={70} src={'/logo.webp'} alt="logo" priority/>
+        <Link href='/'> 
+          <Image width={150} height={70} src={'/logo.webp'} alt="logo" priority/>
+        </Link>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -58,7 +60,9 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-6 pr-5 pl-6">
         <h2 className="flex gap-1 items-center text-lg font-semibold text-orange-900"> <ShoppingBag /> 0</h2>
-        <Button>Login</Button>
+        <Link href='/create-account' >
+          <Button>Login</Button>
+        </Link>
       </div>
     </header>
   )
