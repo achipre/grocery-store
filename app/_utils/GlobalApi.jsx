@@ -20,3 +20,7 @@ export const getProductsByCategory = (category) => axiosClient.get(`/products?fi
 })
 
 export const registerUser = (username, email, password) => axiosClient.post('/auth/local/register', {username, email, password})
+export const signIn = (email, password) => axiosClient.post('/auth/local', {
+  identifier:email, 
+  password
+})

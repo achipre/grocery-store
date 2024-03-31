@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 
 export const TopCategoryList = ({categoryList, selectedCategory}) => {
-  console.log('selectedCategory' + selectedCategory);
 
   return (
     <div className="flex h-full overflow-auto items-stretch gap-4 justify-start sm:justify-center">

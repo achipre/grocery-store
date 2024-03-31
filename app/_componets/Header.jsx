@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LayoutGrid, Search, ShoppingBag } from "lucide-react"
+import { CircleUserIcon, LayoutGrid, Search, ShoppingBag } from "lucide-react"
 import Image from "next/image"
 import {
   DropdownMenu,
@@ -13,11 +13,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { getCategory } from "../_utils/GlobalApi"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 
 export const Header = () => {
 
   const [cateroryList, setCategoryList] = useState([])
+  const router = useRouter()
+
+  const isLogin = sessionStorage.getItem('jwt') ? true : false
 
   useEffect(() => {
     getCategoryList()
@@ -25,11 +29,16 @@ export const Header = () => {
   
   const getCategoryList = () => getCategory().then(resp => setCategoryList(resp?.data?.data))
 
+  const onLogout = () => {
+    sessionStorage.clear()
+    router.push('/')
+  }
+
   return (
     <header className="flex justify-between p-5 shadow-md">
       <div className="flex gap-6 items-center">
         <Link href='/'> 
-          <Image width={150} height={70} src={'/logo.webp'} alt="logo" priority/>
+          <Image width={150} height={70} src='/logo.webp' alt="logo" priority/>
         </Link>
         
         <DropdownMenu>
@@ -60,9 +69,25 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-6 pr-5 pl-6">
         <h2 className="flex gap-1 items-center text-lg font-semibold text-orange-900"> <ShoppingBag /> 0</h2>
-        <Link href='/create-account' >
-          <Button>Login</Button>
-        </Link>
+        {!isLogin ? 
+          <Link href='/create-account' >
+            <Button>Login</Button>
+          </Link>
+          : 
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+            <CircleUserIcon className="bg-orange-200 h-12 w-12 p-2 rounded-full cursor-pointer" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel className='text-lg'>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className='text-lg'>Profile</DropdownMenuItem>
+              <DropdownMenuItem className='text-lg'>My order</DropdownMenuItem>
+              <DropdownMenuItem onClick={onLogout} className='text-lg'>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
+        
       </div>
     </header>
   )
