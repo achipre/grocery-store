@@ -11,14 +11,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getCategory } from "../_utils/GlobalApi"
+import { getCartItemsApi, getCategory } from "../_utils/GlobalApi"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-
 export const Header = () => {
+  const jwt = sessionStorage.getItem('jwt')
+  const user = JSON.parse(sessionStorage.getItem('user'))
 
   const [cateroryList, setCategoryList] = useState([])
+  const [totalCartItem, setTotalCartItem] = useState(0)
+
   const router = useRouter()
 
   const isLogin = sessionStorage.getItem('jwt') ? true : false
@@ -26,8 +29,15 @@ export const Header = () => {
   useEffect(() => {
     getCategoryList()
   }, [])
-  
+  useEffect(() => {
+    getCartItems()
+  }, [])
   const getCategoryList = () => getCategory().then(resp => setCategoryList(resp?.data?.data))
+
+  const getCartItems = async() => {
+    const cartListItem = await getCartItemsApi(user.id, jwt)
+    setTotalCartItem(cartListItem.length)
+  }
 
   const onLogout = () => {
     sessionStorage.clear()
@@ -68,7 +78,7 @@ export const Header = () => {
         </div>
       </div>
       <div className="flex items-center gap-6 pr-5 pl-6">
-        <h2 className="flex gap-1 items-center text-lg font-semibold text-orange-900"> <ShoppingBag /> 0</h2>
+        <h2 className="flex gap-1 items-center text-lg font-semibold text-orange-900"> <ShoppingBag /> <span className="bg-orange-400 px-2 cursor-pointer rounded-full">{totalCartItem}</span> </h2>
         {!isLogin ? 
           <Link href='/create-account' >
             <Button>Login</Button>

@@ -1,17 +1,55 @@
 import { Button } from "@/components/ui/button"
-import { ShoppingBasket } from "lucide-react"
+import { Loader2, ShoppingBasket } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { addToBuyCart } from "../_utils/GlobalApi"
+import { toast } from "sonner"
 
 export const ProductItemDetail = ({product}) => {
+  const jwt = sessionStorage.getItem('jwt')
+  const user = JSON.parse(sessionStorage.getItem('user'))
+
+  const params = useRouter()
+
   const [productTotalPrice, setProductTotalPrice] = useState(product?.attributes?.sellingPrice)
   const [quantity,setQuantity] = useState(1)
+  const [loading, setLoading] = useState(false)
+
   const handleRestQuantity = () => {
     if (quantity < 2) return
     setQuantity(quantity - 1)
   }
   const handlePlusQuantity = () => {
     setQuantity(quantity + 1)
+  }
+  const addToCart = () => {
+    setLoading(true)
+    if (!jwt) {
+      params.push('/sign-in')
+      setLoading(false)
+      return
+    }
+    const data = {
+      data: {
+        quantity,
+        amount: (quantity * productTotalPrice).toFixed(2),
+        products: product.id,
+        users_permissions_users: user.id,
+        userId: user.id
+      }
+    }
+    addToBuyCart(data, jwt)
+      .then(resp => {
+        console.log(resp);
+        toast('Added to cart')
+        setLoading(false)
+      })
+      .catch(e => {
+        toast('Error while adding into cart')
+        setLoading(false)
+      })
+
   }
   return (
     <article className="grid grid-cols-1 sm:grid-cols-2">
@@ -35,9 +73,13 @@ export const ProductItemDetail = ({product}) => {
             <span className="text-2xl font-bold">=</span>
             <p className="text-2xl font-bold"> $ {(productTotalPrice * quantity).toFixed(2)}</p>
           </div>
-          <Button className='flex gap-2 text-xl'>
-            <ShoppingBasket/>
-            Add to Cart
+          <Button onClick={addToCart} className='flex gap-2 text-xl' disabled={loading}>
+            {loading ? <Loader2 className="mr-2 animate-spin"/> : (
+              <>
+                <ShoppingBasket/>
+                <span>Add to Cart</span>
+              </>
+            )}
           </Button>
         </div>
         <span className="bg-orange-200 rounded-full self-start px-6 font-bold text-orange-800">Category: {product?.attributes?.categories?.data[0]?.attributes?.name}</span>

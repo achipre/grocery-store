@@ -24,3 +24,18 @@ export const signIn = (email, password) => axiosClient.post('/auth/local', {
   identifier:email, 
   password
 })
+
+export const addToBuyCart = (data, jwt) => axiosClient.post('/user-carts', data, {
+  headers:{
+    Authorization: 'Bearer ' + jwt
+  }
+})
+
+export const getCartItemsApi = (userId, jwt) => axiosClient.get(`/user-carts?filters[userId][$eq]=${userId}&populate=*`,{
+  headers:{
+    Authorization: 'Bearer ' + jwt
+  }
+})
+  .then(resp => {
+    return resp.data.data
+  })
