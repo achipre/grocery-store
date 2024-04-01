@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CircleUserIcon, LayoutGrid, Search, ShoppingBag } from "lucide-react"
 import Image from "next/image"
@@ -14,10 +14,13 @@ import {
 import { getCartItemsApi, getCategory } from "../_utils/GlobalApi"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { UpdateCartContext } from "../_context/UpdateCartContext"
 
 export const Header = () => {
   const jwt = sessionStorage.getItem('jwt')
   const user = JSON.parse(sessionStorage.getItem('user'))
+  const {updateCart, setUpdateCart} = useContext(UpdateCartContext)
+
 
   const [cateroryList, setCategoryList] = useState([])
   const [totalCartItem, setTotalCartItem] = useState(0)
@@ -31,7 +34,7 @@ export const Header = () => {
   }, [])
   useEffect(() => {
     getCartItems()
-  }, [])
+  }, [updateCart])
   const getCategoryList = () => getCategory().then(resp => setCategoryList(resp?.data?.data))
 
   const getCartItems = async() => {
