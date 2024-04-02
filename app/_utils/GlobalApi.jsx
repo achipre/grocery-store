@@ -49,4 +49,8 @@ export const getCartItemsApi = (userId, jwt) => axiosClient.get(`/user-carts?fil
     return cartInfo
   })
 
-  export const deleteCartItem = (id) =>axiosClient.delete(`/api/user-carts/${id}`)
+  export const deleteCartItem = (id, jwt) => axiosClient.delete(`/user-carts/${id}`, {
+    headers: {
+      Authorization: 'Bearer ' + jwt
+    }
+  })

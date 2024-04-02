@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -20,29 +21,37 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-import { getCartItemsApi, getCategory } from "../_utils/GlobalApi"
+import { deleteCartItem, getCartItemsApi, getCategory } from "../_utils/GlobalApi"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { UpdateCartContext } from "../_context/UpdateCartContext"
 import { CartItemList } from "./CartItemList"
+import { toast } from "sonner"
 
 export const Header = () => {
   const jwt = sessionStorage.getItem('jwt')
   const user = JSON.parse(sessionStorage.getItem('user'))
-  const {updateCart, setUpdateCart} = useContext(UpdateCartContext)
+  const router = useRouter()
+  const isLogin = sessionStorage.getItem('jwt') ? true : false
 
+  const {updateCart, setUpdateCart} = useContext(UpdateCartContext)
 
   const [cateroryList, setCategoryList] = useState([])
   const [totalCartItem, setTotalCartItem] = useState(0)
   const [cartItemList, setCartItemList] = useState([])
-
-  const router = useRouter()
-
-  const isLogin = sessionStorage.getItem('jwt') ? true : false
+  const [subtotal, setSubtotal] = useState(0)
+  useEffect(() => {
+    let total = 0
+    cartItemList.forEach(amount => {
+      return total = total + amount.amount
+    });
+    setSubtotal(total)
+  }, [cartItemList])
 
   useEffect(() => {
     getCategoryList()
   }, [])
+
   useEffect(() => {
     getCartItems()
   }, [updateCart])
@@ -52,12 +61,20 @@ export const Header = () => {
     const cartListItem = await getCartItemsApi(user?.id, jwt)
     setTotalCartItem(cartListItem.length)
     setCartItemList(cartListItem)
-
   }
 
   const onLogout = () => {
     sessionStorage.clear()
     router.push('/')
+  }
+
+  const handlerItemDelete = (id) => {
+    console.log(id);
+    deleteCartItem(id, jwt)
+      .then(resp => {
+        toast('Item remove')
+        getCartItems()
+      })
   }
 
   return (
@@ -105,9 +122,15 @@ export const Header = () => {
           <SheetHeader>
             <SheetTitle className='bg-primary text-slate-100 font-bold text-lg p-2 mt-4 rounded-t-lg'>My Cart</SheetTitle>
             <SheetDescription>
-              <CartItemList cartItemList={cartItemList} />
+              <CartItemList cartItemList={cartItemList} handlerItemDelete={handlerItemDelete} />
             </SheetDescription>
           </SheetHeader>
+          <SheetClose asChild>
+            <div className="absolute w-[90%] mt-4 mx-auto bottom-6 flex flex-col gap-2">
+              <h2 className="font-bold text-lg flex justify-between">Subtotal: <span>${subtotal}</span></h2>
+              <Button onClick={() => router.push('/checkout')}>Checkout</Button>
+            </div>
+          </SheetClose>
         </SheetContent>
       </Sheet>
         {!isLogin ? 
