@@ -11,10 +11,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
 import { getCartItemsApi, getCategory } from "../_utils/GlobalApi"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { UpdateCartContext } from "../_context/UpdateCartContext"
+import { CartItemList } from "./CartItemList"
 
 export const Header = () => {
   const jwt = sessionStorage.getItem('jwt')
@@ -24,6 +34,7 @@ export const Header = () => {
 
   const [cateroryList, setCategoryList] = useState([])
   const [totalCartItem, setTotalCartItem] = useState(0)
+  const [cartItemList, setCartItemList] = useState([])
 
   const router = useRouter()
 
@@ -37,9 +48,11 @@ export const Header = () => {
   }, [updateCart])
   const getCategoryList = () => getCategory().then(resp => setCategoryList(resp?.data?.data))
 
-  const getCartItems = async() => {
-    const cartListItem = await getCartItemsApi(user.id, jwt)
+  const getCartItems = async () => {
+    const cartListItem = await getCartItemsApi(user?.id, jwt)
     setTotalCartItem(cartListItem.length)
+    setCartItemList(cartListItem)
+
   }
 
   const onLogout = () => {
@@ -81,7 +94,22 @@ export const Header = () => {
         </div>
       </div>
       <div className="flex items-center gap-6 pr-5 pl-6">
-        <h2 className="flex gap-1 items-center text-lg font-semibold text-orange-900"> <ShoppingBag /> <span className="bg-orange-400 px-2 cursor-pointer rounded-full">{totalCartItem}</span> </h2>
+      <Sheet>
+        <SheetTrigger>
+          <h2 className="flex gap-1 items-center text-lg font-semibold text-orange-900"> 
+            <ShoppingBag /> 
+            <span className="bg-orange-400 px-2 cursor-pointer rounded-full">{totalCartItem}</span> 
+          </h2>
+        </SheetTrigger>
+        <SheetContent className='overflow-scroll'>
+          <SheetHeader>
+            <SheetTitle className='bg-primary text-slate-100 font-bold text-lg p-2 mt-4 rounded-t-lg'>My Cart</SheetTitle>
+            <SheetDescription>
+              <CartItemList cartItemList={cartItemList} />
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
         {!isLogin ? 
           <Link href='/create-account' >
             <Button>Login</Button>

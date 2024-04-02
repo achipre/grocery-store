@@ -43,7 +43,6 @@ export const ProductItemDetail = ({product}) => {
     }
     addToBuyCart(data, jwt)
       .then(resp => {
-        console.log(resp);
         toast('Added to cart')
         setUpdateCart(!updateCart)
         setLoading(false)
@@ -87,8 +86,6 @@ export const ProductItemDetail = ({product}) => {
         </div>
         <span className="bg-orange-200 rounded-full self-start px-6 font-bold text-orange-800">Category: {product?.attributes?.categories?.data[0]?.attributes?.name}</span>
       </div>
-
-
     </article>
   )
 }

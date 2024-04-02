@@ -31,11 +31,22 @@ export const addToBuyCart = (data, jwt) => axiosClient.post('/user-carts', data,
   }
 })
 
-export const getCartItemsApi = (userId, jwt) => axiosClient.get(`/user-carts?filters[userId][$eq]=${userId}&populate=*`,{
+export const getCartItemsApi = (userId, jwt) => axiosClient.get(`/user-carts?filters[userId][$eq]=${userId}&[populate][products][populate][images][populate][0]=url`,{
   headers:{
     Authorization: 'Bearer ' + jwt
   }
 })
   .then(resp => {
-    return resp.data.data
+    const data = resp.data.data
+    const cartInfo = data.map((item,idx) => ({
+      name: item?.attributes?.products?.data[0]?.attributes?.name,
+      quantity: item?.attributes?.quantity,
+      amount: item?.attributes?.amount,
+      image: item?.attributes?.products?.data[0]?.attributes?.images?.data[0]?.attributes?.url,
+      actualPrice: item?.attributes?.products?.data[0]?.sellingPrice,
+      id:item?.id
+    }))
+    return cartInfo
   })
+
+  export const deleteCartItem = (id) =>axiosClient.delete(`/api/user-carts/${id}`)
