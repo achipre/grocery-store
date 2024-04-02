@@ -128,7 +128,7 @@ export const Header = () => {
           <SheetClose asChild>
             <div className="absolute w-[90%] mt-4 mx-auto bottom-6 flex flex-col gap-2">
               <h2 className="font-bold text-lg flex justify-between">Subtotal: <span>${subtotal}</span></h2>
-              <Button onClick={() => router.push('/checkout')}>Checkout</Button>
+              <Button onClick={() => router.push(jwt ? '/checkout': '/sign-in')}>Checkout</Button>
             </div>
           </SheetClose>
         </SheetContent>
