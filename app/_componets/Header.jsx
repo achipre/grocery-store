@@ -58,6 +58,7 @@ export const Header = () => {
   const getCategoryList = () => getCategory().then(resp => setCategoryList(resp?.data?.data))
 
   const getCartItems = async () => {
+    if (!jwt) return
     const cartListItem = await getCartItemsApi(user?.id, jwt)
     setTotalCartItem(cartListItem.length)
     setCartItemList(cartListItem)

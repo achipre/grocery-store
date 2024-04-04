@@ -1,3 +1,5 @@
+import { data } from "autoprefixer";
+
 const { default: axios } = require("axios");
 
 const axiosClient = axios.create({
@@ -44,12 +46,19 @@ export const getCartItemsApi = (userId, jwt) => axiosClient.get(`/user-carts?fil
       amount: item?.attributes?.amount,
       image: item?.attributes?.products?.data[0]?.attributes?.images?.data[0]?.attributes?.url,
       actualPrice: item?.attributes?.products?.data[0]?.sellingPrice,
-      id:item?.id
+      id:item?.id,
+      products: item?.attributes?.products?.data[0]?.id
     }))
     return cartInfo
   })
 
   export const deleteCartItem = (id, jwt) => axiosClient.delete(`/user-carts/${id}`, {
+    headers: {
+      Authorization: 'Bearer ' + jwt
+    }
+  })
+
+  export const createOrder =(data, jwt) => axiosClient.post(`/orders`,data, {
     headers: {
       Authorization: 'Bearer ' + jwt
     }
